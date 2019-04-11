@@ -35,15 +35,15 @@ class DomainRecordDO(object):
 class ClientDOApi(object):
 
     def __init__(self, api_token):
-        self.api_url_base = 'https://api.digitalocean.com/v2/'
-        self.api_token = api_token
-        self.headers = {'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.api_token}'}
+        self.__api_url_base = 'https://api.digitalocean.com/v2/'
+        self.__api_token = api_token
+        self.__headers = {'Content-Type': 'application/json',
+            'Authorization': f'Bearer {self.__api_token}'}
 
     def get_account_info(self):
-        api_url = f'{self.api_url_base}account'
+        api_url = f'{self.__api_url_base}account'
 
-        response = requests.get(api_url, headers=self.headers)
+        response = requests.get(api_url, headers=self.__headers)
 
         if response.status_code == 200:
             account = json.loads(response.content.decode('utf-8'))
@@ -62,10 +62,10 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def get_domains(self):
-        api_url = f'{self.api_url_base}domains'
+        api_url = f'{self.__api_url_base}domains'
 
         domains = []
-        response = requests.get(api_url, headers=self.headers)
+        response = requests.get(api_url, headers=self.__headers)
 
         if response.status_code == 200:
             domain_list = json.loads(response.content.decode('utf-8'))
@@ -83,11 +83,11 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def create_domain(self, name, ip_address):
-        api_url = f'{self.api_url_base}domains'
+        api_url = f'{self.__api_url_base}domains'
         
         new_domain = { "name": name, "ip_address": ip_address }
 
-        response = requests.post(api_url, headers=self.headers, json=new_domain)
+        response = requests.post(api_url, headers=self.__headers, json=new_domain)
 
         if response.status_code == 201:
             domain_created = json.loads(response.content.decode('utf-8'))
@@ -104,11 +104,11 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def get_domain_records(self, domain_name):
-        api_url = f'{self.api_url_base}domains/{domain_name}/records'
+        api_url = f'{self.__api_url_base}domains/{domain_name}/records'
 
         domain_records = []
 
-        response = requests.get(api_url, headers=self.headers)
+        response = requests.get(api_url, headers=self.__headers)
 
         if response.status_code == 200:
             record_list = json.loads(response.content.decode('utf-8'))
@@ -133,11 +133,11 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def create_domain_record(self,domain_name, type, record_name, data, priority, port, ttl, weight, flags, tag):
-        api_url = f'{self.api_url_base}domains/{domain_name}/records'
+        api_url = f'{self.__api_url_base}domains/{domain_name}/records'
         
         new_record = { "type": type, "name": record_name, "data": data, "priority": priority, "port": port, "ttl": ttl, "weight": weight, "flags": flags, "tag": tag }
 
-        response = requests.post(api_url, headers=self.headers, json=new_record)
+        response = requests.post(api_url, headers=self.__headers, json=new_record)
 
         if response.status_code == 201:
             record_created = json.loads(response.content.decode('utf-8'))
