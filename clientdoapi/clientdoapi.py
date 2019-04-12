@@ -33,7 +33,11 @@ class DomainRecordDO(object):
         self.tag = tag
 
 class ClientDOApi(object):
+    """
+    Class to connect to Digital Ocean API and manage their endpoints
 
+    :param string api_token: The token provided from Digital Ocean to access its API
+    """
     def __init__(self, api_token):
         self.__api_url_base = 'https://api.digitalocean.com/v2/'
         self.__api_token = api_token
@@ -41,6 +45,12 @@ class ClientDOApi(object):
             'Authorization': f'Bearer {self.__api_token}'}
 
     def get_account_info(self):
+        """
+        Method to get information from the digital ocean account
+
+        :returns: a AccountDO object containing account info
+        :rtype: AccountDO
+        """
         api_url = f'{self.__api_url_base}account'
 
         response = requests.get(api_url, headers=self.__headers)
@@ -62,6 +72,12 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def get_domains(self):
+        """
+        Method to get a domains list
+
+        :returns: a list with DomainDO objects containing domain info as name, ttl and zone_file
+        :rtype: list
+        """
         api_url = f'{self.__api_url_base}domains'
 
         domains = []
@@ -100,6 +116,34 @@ class ClientDOApi(object):
             domain.zone_file = domain_created["zone_file"]
 
             return domain
+        else:
+            raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
+
+    def get_domain(self, domain_name):
+        api_url = f'{self.__api_url_base}domains/{domain_name}'
+
+        response = requests.get(api_url, headers=self.__headers)
+
+        if response.status_code == 200:
+            domain_response = json.loads(response.content.decode('utf-8'))
+            domain_response = domain_response["domain"]
+
+            domain = DomainDO()
+            domain.name = domain_response["name"]
+            domain.ttl = domain_response["ttl"]
+            domain.zone_file = domain_response["zone_file"].splitlines()
+
+            return domain
+        else:
+            raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
+
+    def delete_domain(self, domain_name):
+        api_url = f'{self.__api_url_base}domains/{domain_name}'
+
+        response = requests.delete(api_url, headers=self.__headers)
+
+        if response.status_code == 204:
+            return response.status_code
         else:
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
