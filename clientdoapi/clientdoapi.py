@@ -13,12 +13,52 @@ class AccountDO(object):
         self.status = status
         self.status_message = status_message
 
+    def __json__(self):
+        return {
+            'droplet_limit': self.droplet_limit,
+            'floating_ip_limit': self.floating_ip_limit,
+            'email': self.email,
+            'uuid': self.uuid,
+            'email_verified': self.email_verified,
+            'status': self.status,
+            'status_message': self.status_message
+        }
+
+    for_json = __json__
+
+    def from_json(cls,json):
+        obj = cls()
+        obj.droplet_limit = json['droplet_limit']
+        obj.floating_ip_limit = json['floating_ip_limit']
+        obj.email = json['email']
+        obj.uuid = json['uuid']
+        obj.email_verified = json['email_verified']
+        obj.status = json['status']
+        obj.status_message = json['status_message']
+        return obj
+
+
 class DomainDO(object):
-    def __init__(self, name="",ttl=0,zone_file=[]):
+    def __init__(self, name="",ttl=0,zone_file=""):
         self.name = name
         self.ttl = ttl
         self.zone_file = zone_file
 
+    def __json__(self):
+        return {
+            'name': self.name,
+            'ttl': self.ttl,
+            'zone_file': self.zone_file
+        }
+
+    for_json = __json__
+
+    def from_json(cls,json):
+        obj = cls()
+        obj.name = json['name']
+        obj.ttl = json['ttl']
+        obj.zone_file = json['zone_file']
+        return obj
 class DomainRecordDO(object):
     def __init__(self, id=0, type="", name="", data="", priority=None, port=None, ttl=0,weight=None, flags=0, tag=""):
         self.id = id
@@ -31,6 +71,36 @@ class DomainRecordDO(object):
         self.weight = weight
         self.flags = flags
         self.tag = tag
+
+    def __json__(self):
+        return {
+            'id': self.id,
+            'type': self.type,
+            'name': self.name,
+            'data': self.data,
+            'priority': self.priority,
+            'port': self.port,
+            'ttl': self.ttl,
+            'weight': self.weight,
+            'flags': self.flags,
+            'tag': self.tag
+        }
+
+    for_json = __json__
+
+    def from_json(cls,json):
+        obj = cls()
+        obj.id = json['id']
+        obj.type = json['type']
+        obj.name = json['name']
+        obj.data = json['data']
+        obj.priority = json['priority']
+        obj.port = json['port']
+        obj.ttl = json['ttl']
+        obj.weight = json['weight']
+        obj.flags = json['flags']
+        obj.tag = json['tag']
+        return obj
 
 class ClientDOApi(object):
     """
@@ -91,7 +161,7 @@ class ClientDOApi(object):
                 domain = DomainDO()
                 domain.name = dom["name"] 
                 domain.ttl = dom["ttl"]
-                domain.zone_file = dom["zone_file"].splitlines()
+                domain.zone_file = dom["zone_file"]
                 domains.append(domain)
 
             return domains
