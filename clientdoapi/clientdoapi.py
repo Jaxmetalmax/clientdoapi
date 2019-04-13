@@ -169,6 +169,14 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def create_domain(self, name, ip_address):
+        """
+        Method to create a domain
+        
+        :param string name: The name of the domain to create
+        :param string ip_address: The IP address to point the domain 
+        :returns: a DomainDO object containing domain info as name, ttl and zone_file
+        :rtype: DomainDO
+        """
         api_url = f'{self.__api_url_base}domains'
         
         new_domain = { "name": name, "ip_address": ip_address }
@@ -190,6 +198,13 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def get_domain(self, domain_name):
+        """
+        Method to get info from a domain
+        
+        :param string name: The name of the domain to obtain
+        :returns: a DomainDO object containing domain info as name, ttl and zone_file
+        :rtype: DomainDO
+        """
         api_url = f'{self.__api_url_base}domains/{domain_name}'
 
         response = requests.get(api_url, headers=self.__headers)
@@ -201,13 +216,20 @@ class ClientDOApi(object):
             domain = DomainDO()
             domain.name = domain_response["name"]
             domain.ttl = domain_response["ttl"]
-            domain.zone_file = domain_response["zone_file"].splitlines()
+            domain.zone_file = domain_response["zone_file"]
 
             return domain
         else:
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def delete_domain(self, domain_name):
+        """
+        Method to delete a domain
+        
+        :param string name: The name of the domain to delete
+        :returns: a HTTP response code, 204 if it's deleted
+        :rtype: integer 
+        """
         api_url = f'{self.__api_url_base}domains/{domain_name}'
 
         response = requests.delete(api_url, headers=self.__headers)
@@ -218,6 +240,13 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def get_domain_records(self, domain_name):
+        """
+        Method to get a domains record list
+
+        :param string name: The name of the domain to get the records
+        :returns: a list with DomainRecordDO objects containing domain info
+        :rtype: list
+        """
         api_url = f'{self.__api_url_base}domains/{domain_name}/records'
 
         domain_records = []
