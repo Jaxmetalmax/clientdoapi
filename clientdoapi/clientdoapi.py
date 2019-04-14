@@ -276,6 +276,22 @@ class ClientDOApi(object):
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
 
     def create_domain_record(self,domain_name, type, record_name, data, priority, port, ttl, weight, flags, tag):
+        """
+        Method to create a domains record
+
+        :param string domain_name: The domain name for the new record.
+        :param string type: The record type (A, MX, CNAME, etc).
+        :param string record_name: The host name, alias, or service being defined by the record.
+        :param string data: Variable data depending on record type.
+        :param integer priority: The priority for SRV and MX records.
+        :param integer port: The port for SRV records.
+        :param integer ttl: This value is the time to live for the record, in seconds.
+        :param integer weight: The weight for SRV records.
+        :param integer flags: An unsigned integer between 0-255 used for CAA records.
+        :param string tag: The parameter tag for CAA records. Valid values are "issue", "issuewild", or "iodef"
+        :returns: a DomainRecordDO object containing domain record info
+        :rtype: DomainRecordDO
+        """
         api_url = f'{self.__api_url_base}domains/{domain_name}/records'
         
         new_record = { "type": type, "name": record_name, "data": data, "priority": priority, "port": port, "ttl": ttl, "weight": weight, "flags": flags, "tag": tag }
