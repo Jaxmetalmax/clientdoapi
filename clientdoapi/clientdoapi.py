@@ -48,7 +48,7 @@ class AccountDO(object):
             'status_message': self.status_message
         }
 
-    for_json = __json__
+    to_json = __json__
 
     def from_json(cls,json):
         """"
@@ -98,7 +98,7 @@ class DomainDO(object):
             'zone_file': self.zone_file
         }
 
-    for_json = __json__
+    to_json = __json__
 
     def from_json(cls,json):
         obj = cls()
@@ -133,7 +133,7 @@ class DomainRecordDO(object):
             'tag': self.tag
         }
 
-    for_json = __json__
+    to_json = __json__
 
     def from_json(cls,json):
         obj = cls()
