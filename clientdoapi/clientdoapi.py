@@ -2,6 +2,24 @@ import json
 import requests
 
 class AccountDO(object):
+    """
+    The Account object that contains the information from the digital ocean Account
+
+    :param droplet_limit: The total number of Droplets current user or team may have active at one time
+    :type droplet_limit: int
+    :param floating_ip_limit: The total number of Floating IPs the current user or team may have
+    :type floating_ip_limit: int
+    :param email: The email address used by the current user to registered for DigitalOcean
+    :type email: str
+    :param uuid: The unique universal identifier for the current user
+    :type uuid: str
+    :param email_verified: If true, the user has verified their account via email. False otherwise
+    :type email_verified: bool
+    :param status: This value is one of "active", "warning" or "locked"
+    :type status: str
+    :param status_message: A human-readable message giving more details about the status of the account
+    :type status_message: str
+    """
     def __init__(self, droplet_limit=0,
         floating_ip_limit=0, email="", uuid="",
         email_verified=False, status="", status_message=""):
@@ -14,6 +32,12 @@ class AccountDO(object):
         self.status_message = status_message
 
     def __json__(self):
+        """
+        Method to return a dictionary representation from the object
+
+        :returns: a AccountDO object in form of dictionary
+        :rtype: dict
+        """
         return {
             'droplet_limit': self.droplet_limit,
             'floating_ip_limit': self.floating_ip_limit,
@@ -27,6 +51,12 @@ class AccountDO(object):
     for_json = __json__
 
     def from_json(cls,json):
+        """"
+        Method to return an AccountDO object from dictionary object
+
+        :returns: a AccountDO object
+        :rtype: AccountDO
+        """
         obj = cls()
         obj.droplet_limit = json['droplet_limit']
         obj.floating_ip_limit = json['floating_ip_limit']
@@ -39,12 +69,29 @@ class AccountDO(object):
 
 
 class DomainDO(object):
+    """
+    The Domain object that contains the information from the domain being checked
+
+    :param name: The name of the domain itself
+    :type name: str
+    :param ttl: This value is the time to live for the records on this domain, in seconds
+    :type ttl: int
+    :param zone_file: This attribute contains the complete contents of the zone file for the selected domain
+    :type zone_file: str
+    """
+
     def __init__(self, name="",ttl=0,zone_file=""):
         self.name = name
         self.ttl = ttl
         self.zone_file = zone_file
 
     def __json__(self):
+        """
+        Method to return a dictionary representation from the object
+
+        :returns: a DomainDO object in form of dictionary
+        :rtype: dict
+        """
         return {
             'name': self.name,
             'ttl': self.ttl,
@@ -106,7 +153,8 @@ class ClientDOApi(object):
     """
     Class to connect to Digital Ocean API and manage their endpoints
 
-    :param string api_token: The token provided from Digital Ocean to access its API
+    :param api_token: The token provided from Digital Ocean to access its API
+    :type api_token: str
     """
     def __init__(self, api_token):
         self.__api_url_base = 'https://api.digitalocean.com/v2/'
@@ -172,8 +220,10 @@ class ClientDOApi(object):
         """
         Method to create a domain
         
-        :param string name: The name of the domain to create
-        :param string ip_address: The IP address to point the domain 
+        :param name: The name of the domain to create
+        :type name: str
+        :param ip_address: The IP address to point the domain
+        :type ip_address: str
         :returns: a DomainDO object containing domain info as name, ttl and zone_file
         :rtype: DomainDO
         """
@@ -201,7 +251,8 @@ class ClientDOApi(object):
         """
         Method to get info from a domain
         
-        :param string name: The name of the domain to obtain
+        :param name: The name of the domain to obtain
+        :type: str
         :returns: a DomainDO object containing domain info as name, ttl and zone_file
         :rtype: DomainDO
         """
@@ -226,7 +277,8 @@ class ClientDOApi(object):
         """
         Method to delete a domain
         
-        :param string name: The name of the domain to delete
+        :param name: The name of the domain to delete
+        :type: str
         :returns: a HTTP response code, 204 if it's deleted
         :rtype: integer 
         """
@@ -243,7 +295,8 @@ class ClientDOApi(object):
         """
         Method to get a domains record list
 
-        :param string name: The name of the domain to get the records
+        :param name: The name of the domain to get the records
+        :type: str
         :returns: a list with DomainRecordDO objects containing domain info
         :rtype: list
         """
@@ -279,16 +332,26 @@ class ClientDOApi(object):
         """
         Method to create a domains record
 
-        :param string domain_name: The domain name for the new record.
-        :param string type: The record type (A, MX, CNAME, etc).
-        :param string record_name: The host name, alias, or service being defined by the record.
-        :param string data: Variable data depending on record type.
-        :param integer priority: The priority for SRV and MX records.
-        :param integer port: The port for SRV records.
-        :param integer ttl: This value is the time to live for the record, in seconds.
+        :param domain_name: The domain name for the new record.
+        :type: str
+        :param type: The record type (A, MX, CNAME, etc).
+        :type: str
+        :param record_name: The host name, alias, or service being defined by the record.
+        :type: str
+        :param data: Variable data depending on record type.
+        :param: str
+        :param priority: The priority for SRV and MX records.
+        :type: int
+        :param port: The port for SRV records.
+        :type: int
+        :param ttl: This value is the time to live for the record, in seconds.
+        :type: int
         :param integer weight: The weight for SRV records.
-        :param integer flags: An unsigned integer between 0-255 used for CAA records.
-        :param string tag: The parameter tag for CAA records. Valid values are "issue", "issuewild", or "iodef"
+        :type: int
+        :param flags: An unsigned integer between 0-255 used for CAA records.
+        :type: int
+        :param tag: The parameter tag for CAA records. Valid values are "issue", "issuewild", or "iodef"
+        :type: str
         :returns: a DomainRecordDO object containing domain record info
         :rtype: DomainRecordDO
         """
@@ -316,5 +379,55 @@ class ClientDOApi(object):
             domain_record.tag = record_created["tag"]
 
             return domain_record
+        else:
+            raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
+
+    def get_domain_record_id(self, domain_name, record_name):
+        """
+        Method to get a domain record id
+
+        :param domain_name: The name of the domain to get the id
+        :type: str
+        :param record_name: The name of the record name to get
+        :type: str
+        :returns: an ID from domain record
+        :rtype: int
+        """
+        api_url = f'{self.__api_url_base}domains/{domain_name}/records'
+
+        response = requests.get(api_url, headers=self.__headers)
+
+        if response.status_code == 200:
+            record_list = json.loads(response.content.decode('utf-8'))
+            record_list = record_list["domain_records"]
+
+            record_id = 0
+
+            for rec in record_list:
+                if rec["name"] == record_name:
+                    record_id = rec["id"]
+                    break
+
+            return dict(name=domain_name, id=record_id)
+        else:
+            raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
+
+    def delete_domain_record(self, domain_name, record_id):
+        """
+        Method to delete a domain record
+        
+        :param domain_name: The name of the domain to delete
+        :type: str
+        :param record_id: The ID of the record to delete
+        :type: int
+        :returns: a HTTP response code, 204 if it's deleted
+        :rtype: integer 
+        """
+        api_url = f'{self.__api_url_base}domains/{domain_name}/records/{record_id}'
+
+        response = requests.delete(api_url, headers=self.__headers)
+
+        if response.status_code == 204:
+            return response.status_code
         else:
             raise ConnectionError(f'''Code: {response.status_code} Message: {response.reason} Text: {response.text}''')
